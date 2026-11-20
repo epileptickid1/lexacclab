@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дерево синтаксису C → Rust</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="vendor/d3-hierarchy.min.js" defer></script>
+  <script src="viewer.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="masthead">
+      <div>
+        <p class="language-tag" aria-label="З C до Rust">C <span aria-hidden="true">→</span> Rust</p>
+        <h1>Дерево синтаксису</h1>
+      </div>
+      <div class="file-control">
+        <label for="ast-file">Відкрити файл <code>.ast.json</code></label>
+        <input id="ast-file" type="file" accept=".json,application/json" aria-describedby="file-status">
+      </div>
+    </header>
+    <p id="file-status" role="status">Виберіть JSON-файл, згенерований транслятором.</p>
+    <div class="workspace">
+      <section class="panel" aria-labelledby="tree-heading">
+        <div class="panel-heading">
+          <h2 id="tree-heading">Абстрактне синтаксичне дерево</h2>
+          <p>Виберіть вузол, щоб побачити його фрагмент коду.</p>
+        </div>
+        <div class="tree-view" id="tree-view" tabindex="0" role="region" aria-label="Область дерева з прокруткою">
+          <p class="empty">Тут з’явиться дерево.</p>
+          <svg id="tree" role="group" aria-label="Вузли дерева синтаксису" hidden></svg>
+        </div>
+      </section>
+      <section class="panel" aria-labelledby="source-heading">
+        <div class="panel-heading">
+          <h2 id="source-heading">Початковий код C</h2>
+          <p id="source-location" aria-live="polite">Позиція вибраного вузла з’явиться тут.</p>
+        </div>
+        <div id="source-view" tabindex="0" role="region" aria-label="Початковий код із прокруткою">
+          <p class="empty">Тут з’явиться код із файлу.</p>
+          <div class="source-layout" hidden>
+            <pre class="line-numbers" id="line-numbers" aria-hidden="true"></pre>
+            <pre class="source-code"><code id="source"></code></pre>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

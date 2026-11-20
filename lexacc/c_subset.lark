@@ -1,0 +1,47 @@
+?start: function
+function: _INT IDENTIFIER "(" _VOID? ")" block
+block: "{" (declaration | statement)* "}"
+declaration: _INT variable "=" expression ";" -> declare
+           | _INT variable "[" integer "]" "=" initializer_list ";" -> declare_array
+initializer_list: "{" expression ("," expression)* ","? "}"
+
+// An open statement ends in an if still eligible to receive an else.
+?statement: closed_statement | open_statement
+?closed_statement: block
+                 | reference "=" expression ";" -> assign
+                 | _RETURN expression ";" -> return_statement
+                 | _IF "(" expression ")" closed_statement _ELSE closed_statement -> if_statement
+                 | _WHILE "(" expression ")" closed_statement -> while_statement
+?open_statement: _IF "(" expression ")" statement -> if_statement
+               | _IF "(" expression ")" closed_statement _ELSE open_statement -> if_statement
+               | _WHILE "(" expression ")" open_statement -> while_statement
+
+?expression: equality
+?equality: comparison | equality EQUALITY comparison -> binary
+?comparison: sum | comparison COMPARISON sum -> binary
+?sum: product | sum ADDITIVE product -> binary
+?product: unary | product MULTIPLICATIVE unary -> binary
+?unary: atom | ADDITIVE unary -> unary_operation
+?atom: integer
+     | reference
+     | "(" expression ")"
+?reference: variable | variable "[" expression "]" -> index
+variable: IDENTIFIER
+integer: DECIMAL
+
+_INT.2: /int(?![A-Za-z_0-9])/
+_VOID.2: /void(?![A-Za-z_0-9])/
+_IF.2: /if(?![A-Za-z_0-9])/
+_ELSE.2: /else(?![A-Za-z_0-9])/
+_WHILE.2: /while(?![A-Za-z_0-9])/
+_RETURN.2: /return(?![A-Za-z_0-9])/
+IDENTIFIER: /[A-Za-z_][A-Za-z_0-9]*/
+DECIMAL: /(?:0|[1-9][0-9]*)(?![A-Za-z_0-9.])/
+EQUALITY: "==" | "!="
+COMPARISON: "<=" | ">=" | /<(?!<)/ | />(?!>)/
+ADDITIVE: /\+(?![+=])/ | /-(?![-=>])/
+MULTIPLICATIVE: "*" | /\/(?![\/*=])/ | "%"
+
+%ignore /[ \t\f\v\r\n]+/
+%ignore /\/\/[^\n]*/
+%ignore /\/\*(?:[^*]|\*(?!\/))*\*\//
